@@ -9,6 +9,7 @@ import { cn } from "@/lib/utils";
 import { SessionProvider } from "next-auth/react";
 import FacebookPixel from "@/components/FacebookPixel";
 import { MetaPixel } from "@/components/meta-pixel";
+import { NavbarServer } from "@/components/NavbarServer";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-sans" });
 
@@ -23,9 +24,9 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Wink & Wonder",
+  title: "Jethro Laptops",
   description:
-    "Wink & Wonder is a premium online store that offers a curated selection of high-quality sexual wellness products.",
+    "Jethro Laptops is a premium online store that offers a curated selection of high-quality laptops and accessories.",
 };
 
 export default function RootLayout({
@@ -40,7 +41,7 @@ export default function RootLayout({
       >
         <SessionProvider>
           <div className="mx-auto sm:px-0 ">
-            <Navbar />
+            <NavbarServer />
             {children}
             <Footer />/
           </div>
