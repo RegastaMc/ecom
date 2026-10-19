@@ -227,12 +227,20 @@ export default function EditProductPage({ product }: EditProductPageProps) {
     setSubmitting(true);
 
     try {
+      const category = mockCategories.find((item) => item.name === data.category);
+      if (!category) {
+        throw new Error('Selected category could not be found');
+      }
+      const subCategory = category.subCategories?.find(
+        (item) => item.name === data.subCategory,
+      );
+
       const productData = {
         id: product.id,
         name: data.name,
         desc: data.desc || null,
-        category: data.category,
-        subCategory: data.subCategory || null,
+        categoryId: category.id,
+        subCategoryId: subCategory?.id || null,
         price: parseFloat(data.price),
         offerPrice: data.offerPrice ? parseFloat(data.offerPrice) : null,
         isAvailable: data.isAvailable,

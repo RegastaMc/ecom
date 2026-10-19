@@ -239,8 +239,8 @@ const CartSlide: React.FC<CartSlideProps> = ({ onOpen, onClose, className = '' }
                           <div className="flex items-start justify-between gap-2">
                             <div className="flex-1 min-w-0">
                               <h3 className="font-semibold text-[#3d2c28] text-sm truncate">{item.name}</h3>
-                              {item.category && (
-                                <p className="text-xs text-[#DBA39A] font-medium">{item.category}</p>
+                              {item.categoryId && (
+                                <p className="text-xs text-[#DBA39A] font-medium">{item.categoryId}</p>
                               )}
                               <p className="text-xs font-medium text-[#DBA39A] mt-1">
                                 Ksh.{item.price.toFixed(2)}

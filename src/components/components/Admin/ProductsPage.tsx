@@ -132,7 +132,7 @@ export default function ProductsPage({
     // Prepare export data
     const exportData = filteredProducts.map((product) => ({
       Name: product.name,
-      Category: product.category,
+      Category: product.categoryId,
       Price: `KSh ${product.price.toLocaleString()}`,
       OfferPrice: product.offerPrice
         ? `KSh ${product.offerPrice.toLocaleString()}`
@@ -342,7 +342,7 @@ export default function ProductsPage({
                     </td>
 
                     <td className='whitespace-nowrap px-4 py-4 text-sm text-gray-700'>
-                      {product.category}
+                      {product.categoryId}
                     </td>
 
                     <td className='whitespace-nowrap px-4 py-4 text-sm font-medium text-gray-900'>

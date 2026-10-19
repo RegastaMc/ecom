@@ -159,7 +159,7 @@ const ProductDetailsClient = ({ product }: ProductDetailsClientProps) => {
         <div className='space-y-6'>
           {/* Category */}
           <div className='text-sm text-blue-600 font-semibold uppercase tracking-wide'>
-            {product.category}
+            {product.categoryId}
           </div>
 
           {/* Title */}

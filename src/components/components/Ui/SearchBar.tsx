@@ -18,7 +18,7 @@ const SearchBar = () => {
   const [query, setQuery] = useState("");
   const [suggestions, setSuggestions] = useState<{
     products: any[];
-    categories: string[];
+    categories: { id: string; name: string; slug: string }[];
   }>({ products: [], categories: [] });
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -195,13 +195,13 @@ const SearchBar = () => {
                     </p>
                   </div>
                   <div className="space-y-1">
-                    {suggestions.categories.map((cat, idx) => (
+                    {suggestions.categories.map((cat) => (
                       <button
-                        key={`cat-${idx}`}
-                        onClick={() => handleSuggestionClick(cat)}
+                        key={cat.id}
+                        onClick={() => handleSuggestionClick(cat.name)}
                         className="flex w-full items-center justify-between rounded-lg px-3 py-2 text-left transition hover:bg-gray-50"
                       >
-                        <span className="text-sm text-gray-700">{cat}</span>
+                        <span className="text-sm text-gray-700">{cat.name}</span>
                         <ArrowRight className="h-3 w-3 text-gray-400" />
                       </button>
                     ))}
