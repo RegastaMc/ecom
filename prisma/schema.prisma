@@ -1,0 +1,199 @@
+generator client {
+    provider = "prisma-client-js"
+    output   = "./src/lib/prisma/client"
+}
+
+datasource db {
+    provider = "postgresql"
+    url      = env("DATABASE_URL")
+}
+
+enum userRole {
+    SUPER
+    ADMIN
+    USER
+}
+
+enum userStatus {
+    ACTIVE
+    INACTIVE
+    BANNED
+}
+
+model User {
+    id            String    @id @default(cuid())
+    email         String    @unique
+    username      String?   @unique
+    passwordhash  String
+    createdAt     DateTime  @default(now())
+    updatedAt     DateTime  @updatedAt
+    emailVerified DateTime?
+    image         Json?
+    name          String?
+    phone         String?   @unique
+
+    status userStatus @default(ACTIVE)
+    role   userRole   @default(USER)
+    orders Order[]
+}
+
+model Order {
+    id          String @id @default(cuid())
+    orderNumber String @unique
+    userId      String
+    user        User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+    items OrderItem[]
+
+    status        OrderStatus   @default(PENDING)
+    paymentStatus PaymentStatus @default(PENDING)
+    paymentMethod String
+
+    subtotal    Float
+    tax         Float
+    shippingFee Float
+    total       Float
+
+    mpesaReceiptNumber String?
+    mpesaTransactionId String?
+    mpesaResultCode    String?
+
+    phone String
+    email String
+
+    shippingAddress Json
+
+    paidAt      DateTime?
+    deliveredAt DateTime?
+    cancelledAt DateTime?
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+}
+
+model OrderItem {
+    id        String  @id @default(cuid())
+    orderId   String
+    order     Order   @relation(fields: [orderId], references: [id], onDelete: Cascade)
+    productId String
+    name      String
+    price     Float
+    quantity  Int
+    image     Json?
+    product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+}
+
+enum OrderStatus {
+    PENDING
+    PROCESSING
+    SHIPPED
+    DELIVERED
+    CANCELLED
+}
+
+enum PaymentStatus {
+    PENDING
+    PAID
+    FAILED
+    REFUNDED
+}
+
+model Category {
+  id          String  @id @default(cuid()) @map("_id")
+  name        String
+  slug        String  @unique
+  image       String?
+  description String?
+  isActive    Boolean @default(true)
+  sortOrder   Int     @default(0)
+
+  parentId String?    @map("parent_id")
+  parent   Category?  @relation("CategoryTree", fields: [parentId], references: [id], onDelete: Cascade)
+  children Category[] @relation("CategoryTree")
+
+  products            Product[] @relation("ProductCategory")
+  subCategoryProducts Product[] @relation("ProductSubCategory")
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([parentId])
+  @@index([slug])
+  @@map("categories")
+}
+
+model Product {
+  id          String  @id @default(cuid()) @map("_id")
+
+  name        String
+  isAvailable Boolean @default(true)
+  desc        String?
+  images      Json
+  price       Float
+  offerPrice  Float?
+  slug        String? @unique
+
+  // Relations
+  categoryId String   @map("category_id")
+  category   Category @relation("ProductCategory", fields: [categoryId], references: [id], onDelete: Restrict)
+
+  subCategoryId String?   @map("sub_category_id")
+  subCategory   Category? @relation("ProductSubCategory", fields: [subCategoryId], references: [id], onDelete: SetNull)
+
+  orderItems OrderItem[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([categoryId])
+  @@map("products")
+}
+model Contact {
+    id        String        @id @default(cuid())
+    contactId String        @unique
+    name      String
+    email     String
+    phone     String
+    subject   String
+    message   String        @db.Text
+    status    ContactStatus @default(UNREAD)
+    reply     String?       @db.Text
+    repliedAt DateTime?
+    repliedBy String?
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+}
+
+enum ContactStatus {
+    UNREAD
+    READ
+    IN_PROGRESS
+    RESOLVED
+    ARCHIVED
+}
+
+model Banner {
+  id           String   @id @default(cuid())
+  title        String
+  subtitle     String?
+  description  String?
+  image        Json?
+  buttonText   String   @default("Shop Now")
+  buttonLink   String   @default("#")
+  type         BannerType @default(PRIMARY)
+  isActive     Boolean  @default(true)
+  order        Int      @default(0)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  
+  @@index([type])
+  @@index([isActive])
+  @@map("banners")
+}
+
+enum BannerType {
+  PRIMARY
+  SECONDARY
+}
+
