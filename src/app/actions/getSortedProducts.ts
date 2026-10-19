@@ -1,8 +1,8 @@
 // app/actions/product.ts
-'use server';
+"use server";
 
-import { db } from '@/lib/db';
-import { revalidatePath } from 'next/cache';
+import { db } from "@/lib/db";
+import { revalidatePath } from "next/cache";
 
 // ============================================================
 // TYPES
@@ -14,7 +14,7 @@ export interface ProductFilters {
   maxPrice?: number;
   isAvailable?: boolean;
   search?: string;
-  sortBy?: 'newest' | 'price-asc' | 'price-desc' | 'popular' | 'rating';
+  sortBy?: "newest" | "price-asc" | "price-desc" | "popular" | "rating";
   limit?: number;
   page?: number;
 }
@@ -30,7 +30,9 @@ export interface ProductResponse {
 // ============================================================
 // FETCH PRODUCTS WITH FILTERS
 // ============================================================
-export async function getProducts(filters: ProductFilters = {}): Promise<ProductResponse> {
+export async function getProducts(
+  filters: ProductFilters = {},
+): Promise<ProductResponse> {
   try {
     const {
       category,
@@ -39,7 +41,7 @@ export async function getProducts(filters: ProductFilters = {}): Promise<Product
       maxPrice,
       isAvailable = true,
       search,
-      sortBy = 'newest',
+      sortBy = "newest",
       limit = 20,
       page = 1,
     } = filters;
@@ -69,32 +71,32 @@ export async function getProducts(filters: ProductFilters = {}): Promise<Product
 
     if (search) {
       where.OR = [
-        { name: { contains: search, mode: 'insensitive' } },
-        { desc: { contains: search, mode: 'insensitive' } },
-        { category: { contains: search, mode: 'insensitive' } },
+        { name: { contains: search, mode: "insensitive" } },
+        { desc: { contains: search, mode: "insensitive" } },
+        { category: { contains: search, mode: "insensitive" } },
       ];
     }
 
     // Build order by
     let orderBy: any = {};
     switch (sortBy) {
-      case 'newest':
-        orderBy = { createdAt: 'desc' };
+      case "newest":
+        orderBy = { createdAt: "desc" };
         break;
-      case 'price-asc':
-        orderBy = { price: 'asc' };
+      case "price-asc":
+        orderBy = { price: "asc" };
         break;
-      case 'price-desc':
-        orderBy = { price: 'desc' };
+      case "price-desc":
+        orderBy = { price: "desc" };
         break;
-      case 'popular':
-        orderBy = { orderCount: 'desc' };
+      case "popular":
+        orderBy = { orderCount: "desc" };
         break;
-      case 'rating':
-        orderBy = { rating: 'desc' };
+      case "rating":
+        orderBy = { rating: "desc" };
         break;
       default:
-        orderBy = { createdAt: 'desc' };
+        orderBy = { createdAt: "desc" };
     }
 
     const [items, total] = await Promise.all([
@@ -115,7 +117,7 @@ export async function getProducts(filters: ProductFilters = {}): Promise<Product
       totalPages: Math.ceil(total / limit),
     };
   } catch (error) {
-    console.error('Error fetching products:', error);
+    console.error("Error fetching products:", error);
     return {
       items: [],
       total: 0,
@@ -135,12 +137,12 @@ export async function getTopSellingProducts(limit: number = 8): Promise<any[]> {
       where: {
         isAvailable: true,
       },
-    
+
       take: limit,
     });
     return products;
   } catch (error) {
-    console.error('Error fetching top selling products:', error);
+    console.error("Error fetching top selling products:", error);
     return [];
   }
 }
@@ -155,27 +157,28 @@ export async function getNewArrivals(limit: number = 8): Promise<any[]> {
         isAvailable: true,
       },
       orderBy: {
-        createdAt: 'desc',
+        createdAt: "desc",
       },
       take: limit,
     });
     return products;
   } catch (error) {
-    console.error('Error fetching new arrivals:', error);
+    console.error("Error fetching new arrivals:", error);
     return [];
   }
 }
 
-
-export async function getProductsByCategory(category: string, limit: number = 4): Promise<any[]> {
+export async function getProductsByCategory(
+  category: string,
+  limit: number = 4,
+): Promise<any[]> {
   try {
     const products = await db.product.findMany({
       where: {
-        category,
         isAvailable: true,
       },
       orderBy: {
-        createdAt: 'desc',
+        createdAt: "desc",
       },
       take: limit,
     });
@@ -193,16 +196,16 @@ export async function getFeaturedProducts(limit: number = 6): Promise<any[]> {
   try {
     const products = await db.product.findMany({
       where: {
-        isAvailable: true,       
+        isAvailable: true,
       },
       orderBy: {
-        createdAt: 'desc',
+        createdAt: "desc",
       },
       take: limit,
     });
     return products;
   } catch (error) {
-    console.error('Error fetching featured products:', error);
+    console.error("Error fetching featured products:", error);
     return [];
   }
 }
@@ -218,13 +221,13 @@ export async function getDiscountedProducts(limit: number = 6): Promise<any[]> {
         offerPrice: { not: null },
       },
       orderBy: {
-        createdAt: 'desc',
+        createdAt: "desc",
       },
       take: limit,
     });
     return products;
   } catch (error) {
-    console.error('Error fetching discounted products:', error);
+    console.error("Error fetching discounted products:", error);
     return [];
   }
 }
@@ -239,7 +242,7 @@ export async function getProductById(id: string): Promise<any | null> {
     });
     return product;
   } catch (error) {
-    console.error('Error fetching product:', error);
+    console.error("Error fetching product:", error);
     return null;
   }
 }
@@ -251,7 +254,7 @@ export async function getProductBySlug(slug: string): Promise<any | null> {
     });
     return product;
   } catch (error) {
-    console.error('Error fetching product:', error);
+    console.error("Error fetching product:", error);
     return null;
   }
 }
